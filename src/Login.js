@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate, Link } from "react-router-dom"
+import Dash from "./dash";
 import './Login.css';
 const end = "gmail.com";
+
 
 function Login() {
 
@@ -15,33 +17,27 @@ function Login() {
         e.preventDefault();
 
         try {
-
             await axios.post("http://localhost:8000/", {
                 email, password
             })
-                .then(res => {
-                    if (res.data == "exist" && email.endsWith(end)) {
-                        console.log(email);
-                        
-                    }
-                    else if (res.data == "exist" && email.endsWith(end)){
-                        
-                    }
-                    else if (res.data == "notexist") {
-                        alert("User have not sign up")
-                    }
-                })
-                .catch(e => {
-                    alert("wrong details")
-                    console.log(e);
-                })
+            .then(res => {
+                if (res.data === "exist" && email.endsWith(end)) {
+                    console.log(email);
 
-        }
-        catch (e) {
+                } else if (res.data === "exist" && email.endsWith(end)){
+                    // Handle other cases
+                } else if (res.data === "notexist") {
+                    alert("User has not signed up");
+                }
+            })
+            .catch(e => {
+                alert("Wrong details");
+                console.log(e);
+            });
+
+        } catch (e) {
             console.log(e);
-
         }
-
     }
 
 
@@ -58,7 +54,7 @@ function Login() {
             </form>
 
             <br />
-            <p>OR</p>
+            <p>Not an existing user?</p>
             <br />
 
             <Link to="/signup">Signup Page</Link>

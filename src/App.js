@@ -1,10 +1,10 @@
 // import './App.css'
 import Login from "./Login";
 import Signup from "./Signup";
-
+import Land from "./landing";
+import Dash from "./dash";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from 'react';
 
 function App() {
   return (
@@ -13,7 +13,8 @@ function App() {
         <Routes>
           <Route path="/Login" element={<Login/>}/>
           <Route path="/Signup" element={<Signup/>}/>
-
+          <Route path="/landing" element={<Land/>}/>
+          <Route path="/dash" element={<Dash/>}/>
 
         </Routes>
       </Router>
