@@ -23,9 +23,10 @@ function Login() {
             .then(res => {
                 if (res.data === "exist" && email.endsWith(end)) {
                     console.log(email);
+                    history('/dash')
 
                 } else if (res.data === "exist" && email.endsWith(end)){
-                    // Handle other cases
+                  
                 } else if (res.data === "notexist") {
                     alert("User has not signed up");
                 }
