@@ -1,20 +1,20 @@
-const mongoose = require ("mongoose");
+// mongo.js
+const mongoose = require("mongoose");
 
-
-const url="mongodb://127.0.0.1:27017"
-const connectDB = async()=>{
+const connectDB = async () => {
     try {
-        const conn= await mongoose.connect(url);
-        console.log(`connect to MongoDB`);
+        const conn = await mongoose.connect("mongodb://127.0.0.1:27017");
+        console.log("Connected to MongoDB");
     } catch (error) {
-        console.log(`Error in MongoDB ${error}`)        
+        console.error("Error connecting to MongoDB:", error);
     }
-}
-connectDB()
-module.exports = connectDB;
+};
+connectDB();
 
+const Schema = mongoose.Schema;
 
-const newSchema = new mongoose.Schema({
+// Define user schema
+const userSchema = new Schema({
     email: {
         type: String,
         required: true
@@ -23,8 +23,24 @@ const newSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+});
 
-const collection = mongoose.model("collection", newSchema)
+// Define company schema
+const companySchema = new Schema({
+    name: { type: String, required: true },
+    description: { type: String }
+});
 
-module.exports = collection
+// Define job role schema
+const jobRoleSchema = new Schema({
+    title: { type: String, required: true },
+    description: { type: String },
+    company: { type: Schema.Types.ObjectId, ref: 'Company' } // Reference to the Company model
+});
+
+// Create models
+const User = mongoose.model("User", userSchema);
+const Company = mongoose.model("Company", companySchema);
+const JobRole = mongoose.model("JobRole", jobRoleSchema);
+
+module.exports = { User, Company, JobRole };

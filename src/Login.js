@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate, Link } from "react-router-dom"
-import Dash from "./dash";
+
 import './Login.css';
-const end = "gmail.com";
 
 
 function Login() {
@@ -15,29 +14,22 @@ function Login() {
 
     async function submit(e) {
         e.preventDefault();
-
+    
         try {
-            await axios.post("http://localhost:8000/", {
-                email, password
-            })
-            .then(res => {
-                if (res.data === "exist" && email.endsWith(end)) {
-                    console.log(email);
-                    history('/dash')
-
-                } else if (res.data === "exist" && email.endsWith(end)){
-                  
-                } else if (res.data === "notexist") {
-                    alert("User has not signed up");
-                }
-            })
-            .catch(e => {
-                alert("Wrong details");
-                console.log(e);
-            });
-
-        } catch (e) {
-            console.log(e);
+            const res = await axios.post("http://localhost:8000/", { email, password });
+    
+            if (res.data === "exist" && email.endsWith("vcet.edu.in")) {
+                console.log(email);
+                history('/admin');
+            } else if (res.data === "exist") {
+                console.log(email);
+                history('/dash');
+            } else if (res.data === "notexist") {
+                alert("User has not signed up");
+            }
+        } catch (error) {
+            console.error("Error occurred:", error);
+            alert("Failed to login. Please try again.");
         }
     }
 
