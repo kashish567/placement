@@ -3,47 +3,59 @@ import './dash.css';
 
 function CompanyJobRolesPage() {
   const [companies, setCompanies] = useState([]);
-  const [jobRoles, setJobRoles] = useState([]);
   const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
-    const fetchCompanies = async () => {
+    const fetchCompaniesAndJobRoles = async () => {
       try {
-        const response = await fetch('http://localhost:8000/companies');
-        const data = await response.json();
-        console.log("Company Data:", data);
-        setCompanies(data);
+        const companiesResponse = await fetch('http://localhost:8000/companies');
+        const companiesData = await companiesResponse.json();
+        console.log("Company Data:", companiesData);
+        setCompanies(companiesData);
       } catch (error) {
-        console.error('Failed to fetch companies:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
 
-    const fetchJobRoles = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/job-roles');
-        const data = await response.json();
-        setJobRoles(data);
-      } catch (error) {
-        console.error('Failed to fetch job roles:', error);
-      }
-    };
-
-    fetchCompanies();
-    fetchJobRoles();
+    fetchCompaniesAndJobRoles();
   }, []);
 
-  const handleCompanySelection = (event) => {
-    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
-    setSelectedCompanies(selectedOptions);
+  const toggleCompanySelection = (companyName) => {
+    if (selectedCompanies.includes(companyName)) {
+      setSelectedCompanies(selectedCompanies.filter(company => company !== companyName));
+    } else {
+      setSelectedCompanies([...selectedCompanies, companyName]);
+    }
   };
 
   const getJobRolesForCompany = (companyName) => {
-    return jobRoles.filter(jobRole => jobRole.company === companyName);
+    const company = companies.find(company => company.name === companyName);
+    return company ? company.jobRoles : [];
   };
 
-  const handleSubmit = () => {
-    // Handle submission of selected companies
-    console.log("Selected Companies:", selectedCompanies);
+  const handleSubmit = async () => {
+    try {
+      // Replace 'user' with actual user data
+      const user = { email: 'example@example.com', password: 'password' };
+  
+      const response = await fetch('http://localhost:8000/apply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user, companies: selectedCompanies })
+      });
+      
+      if (response.ok) {
+        setNotification('Applied successfully!');
+      } else {
+        setNotification('Failed to apply. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error applying:', error);
+      setNotification('Failed to apply. Please try again.');
+    }
   };
 
   return (
@@ -61,28 +73,28 @@ function CompanyJobRolesPage() {
         <tbody>
           {companies.map(company => (
             <tr key={company._id}>
-              <td>{company.name}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedCompanies.includes(company.name)}
+                  onChange={() => toggleCompanySelection(company.name)}
+                />
+                {company.name}
+              </td>
               <td>{company.description}</td>
               {getJobRolesForCompany(company.name).map(jobRole => (
-                <React.Fragment key={jobRole.title}>
+                <tr key={jobRole._id}>
                   <td>{jobRole.title}</td>
                   <td>{jobRole.description}</td>
-                </React.Fragment>
+                </tr>
               ))}
-              <td colSpan={jobRoles.length === 0 ? 2 : 0}></td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Selected Companies</h2>
-      <select multiple onChange={handleCompanySelection}>
-        {companies.map(company => (
-          <option key={company._id} value={company.name}>{company.name}</option>
-        ))}
-      </select>
-
       <button onClick={handleSubmit}>Apply</button>
+      {notification && <p>{notification}</p>}
     </div>
   );
 }

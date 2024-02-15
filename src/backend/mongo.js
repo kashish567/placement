@@ -28,19 +28,16 @@ const userSchema = new Schema({
 // Define company schema
 const companySchema = new Schema({
     name: { type: String, required: true },
-    description: { type: String }
-});
-
-// Define job role schema
-const jobRoleSchema = new Schema({
-    title: { type: String, required: true },
     description: { type: String },
-    company: { type: Schema.Types.ObjectId, ref: 'Company' } // Reference to the Company model
+    jobRoles: [{
+        title: { type: String, required: true },
+        description: { type: String }
+    }],
+    applied: { type: Boolean, default: false } // Field to track if the company has been applied
 });
 
 // Create models
 const User = mongoose.model("User", userSchema);
 const Company = mongoose.model("Company", companySchema);
-const JobRole = mongoose.model("JobRole", jobRoleSchema);
 
-module.exports = { User, Company, JobRole };
+module.exports = { User, Company };

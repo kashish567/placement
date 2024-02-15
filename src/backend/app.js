@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const { User, Company, JobRole } = require("./mongo");
 const cors = require("cors");
@@ -10,8 +9,7 @@ const bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
 
-app.get("/", cors(), (req, res) => {});
-
+// Route to handle adding a company with job roles
 app.post("/", async (req, res) => {
     const { email, password } = req.body;
 
@@ -51,37 +49,40 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-// Route to handle adding a company
+
 app.post("/admin/companies", async (req, res) => {
-    const { name, description } = req.body;
-    console.log(name);
+    const { name, description, jobRoles } = req.body;
 
-    // Assuming company ID is generated automatically
-    const companyId = 101;
+    try {
+        // Create a new company instance
+        const newCompany = new Company({
+            name,
+            description,
+            jobRoles // Assign the job roles directly to the company
+        });
 
-    const newCompany = {
-        id: 101,
-        name: name,
-        description: description
-    };
+        // Save the new company to the database
+        await newCompany.save();
 
-    await Company.insertMany([newCompany]);
-    res.status(201).json(newCompany);
+        res.status(201).json(newCompany);
+    } catch (error) {
+        console.error("Failed to add company:", error);
+        res.status(500).json({ error: "Failed to add company" });
+    }
 });
 
 // Route to handle adding a job role
-app.post("/admin/job-roles",async (req, res) => {
+app.post("/admin/job-roles", async (req, res) => {
     try {
-        const { title, description,  } = req.body;
-        if (!title ) {
-            return res.status(400).json({ error: "Title and companyId are required" });
+        const { title, description } = req.body;
+        if (!title) {
+            return res.status(400).json({ error: "Title is required" });
         }
 
         // Create a new job role instance
         const newJobRole = new JobRole({
             title,
-            description,
-          
+            description
         });
 
         // Save the new job role to the database
@@ -94,13 +95,10 @@ app.post("/admin/job-roles",async (req, res) => {
     }
 });
 
-
-// app.js
-
 // Route to get all companies
 app.get("/companies", async (req, res) => {
     try {
-        const companies = await Company.find({}, 'name description'); // Ensure 'description' is included
+        const companies = await Company.find({}, 'name description jobRoles'); // Include 'jobRoles' in the response
         res.json(companies);
     } catch (error) {
         console.error("Failed to fetch companies:", error);
@@ -119,7 +117,24 @@ app.get("/job-roles", async (req, res) => {
     }
 });
 
+app.post("/apply", async (req, res) => {
+    const { companies } = req.body;
+    console.log("Received companies:", companies);
+
+    try {
+        // Loop through the selected companies and update their status
+        for (const companyName of companies) {
+            // Find the company by name and update its status
+            await Company.findOneAndUpdate({ name: companyName }, { $set: { applied: true } });
+        }
+
+        res.status(200).json({ message: "Applied to selected companies successfully" });
+    } catch (error) {
+        console.error("Failed to apply to companies:", error);
+        res.status(500).json({ error: "Failed to apply to companies" });
+    }
+});
 // Start the server
 app.listen(8000, () => {
-    console.log("port connected");
+    console.log("Server is running on port 8000");
 });
