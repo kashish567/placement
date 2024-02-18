@@ -45,7 +45,7 @@ function Login() {
                 <input type="submit" onClick={submit} />
 
             </form>
-
+            <p>To login as a admin, enter a email address with domain "vcet.edu.in"</p>
             <br />
             <p>Not an existing user?</p>
             <br />

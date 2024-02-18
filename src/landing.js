@@ -7,7 +7,7 @@ function Land() {
   return (
     <div className="container">
       <nav>
-        <div className="nav__logo">MEDIBuddy</div>
+        <div className="nav__logo">PAT</div>
         <ul className="nav__links">
           <li className="link"><a href="#">Home</a></li>
           <li className="link"><a href="#">About Us</a></li>
@@ -20,13 +20,13 @@ function Land() {
       </nav>
       <header className="header">
         <div className="content">
-          <h1><span>Get Quick</span><br />Medical Services</h1>
-          <p>
+          <h1><span>Get Quick</span><br />Placement Services</h1>
+          {/* <p>
             In today's fast-paced world, access to prompt and efficient medical
             services is of paramount importance. Your family members and even the
             doctors can keep track of your health sitting on a place.
             MAKING THE THINGS EASIER.
-          </p>
+          </p> */}
         </div>
         
       </header>

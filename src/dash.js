@@ -5,6 +5,7 @@ function CompanyJobRolesPage() {
   const [companies, setCompanies] = useState([]);
   const [selectedCompanies, setSelectedCompanies] = useState([]);
   const [notification, setNotification] = useState('');
+  const [userEmail, setUserEmail] = useState(''); // Assuming you have access to the user's email
 
   useEffect(() => {
     const fetchCompaniesAndJobRoles = async () => {
@@ -29,22 +30,14 @@ function CompanyJobRolesPage() {
     }
   };
 
-  const getJobRolesForCompany = (companyName) => {
-    const company = companies.find(company => company.name === companyName);
-    return company ? company.jobRoles : [];
-  };
-
   const handleSubmit = async () => {
     try {
-      // Replace 'user' with actual user data
-      const user = { email: 'example@example.com', password: 'password' };
-  
       const response = await fetch('http://localhost:8000/apply', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user, companies: selectedCompanies })
+        body: JSON.stringify({ userEmail, companies: selectedCompanies })
       });
       
       if (response.ok) {
@@ -82,12 +75,20 @@ function CompanyJobRolesPage() {
                 {company.name}
               </td>
               <td>{company.description}</td>
-              {getJobRolesForCompany(company.name).map(jobRole => (
-                <tr key={jobRole._id}>
-                  <td>{jobRole.title}</td>
-                  <td>{jobRole.description}</td>
-                </tr>
-              ))}
+              <td>
+                {company.jobRoles.map(jobRole => (
+                  <div key={jobRole._id}>
+                    <p><strong>{jobRole.title}</strong></p>
+                  </div>
+                ))}
+              </td>
+              <td>
+                {company.jobRoles.map(jobRole => (
+                  <div key={jobRole._id}>
+                    <p>{jobRole.description}</p>
+                  </div>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>

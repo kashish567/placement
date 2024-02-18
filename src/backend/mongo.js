@@ -36,8 +36,16 @@ const companySchema = new Schema({
     applied: { type: Boolean, default: false } // Field to track if the company has been applied
 });
 
+const applicationSchema = new Schema({
+    companyId: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    userEmail: { type: String, required: true }
+});
+
+const Application = mongoose.model("Application", applicationSchema);
+
+
 // Create models
 const User = mongoose.model("User", userSchema);
 const Company = mongoose.model("Company", companySchema);
 
-module.exports = { User, Company };
+module.exports = { User, Company , Application};
