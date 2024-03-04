@@ -31,6 +31,10 @@ function CompanyJobRolesPage() {
   };
 
   const handleSubmit = async () => {
+    if (selectedCompanies.length === 0) {
+      alert('Please select at least one company.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:8000/apply', {
         method: 'POST',
@@ -41,13 +45,13 @@ function CompanyJobRolesPage() {
       });
       
       if (response.ok) {
-        setNotification('Applied successfully!');
+        alert('Applied successfully!');
       } else {
-        setNotification('Failed to apply. Please try again.');
+        alert('Failed to apply. Please try again.');
       }
     } catch (error) {
       console.error('Error applying:', error);
-      setNotification('Failed to apply. Please try again.');
+      alert('Failed to apply. Please try again.');
     }
   };
 
